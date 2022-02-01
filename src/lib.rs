@@ -17,7 +17,7 @@ use log::{trace, debug, warn};
 
 use embedded_hal::spi::{Mode as SpiMode, Phase, Polarity};
 use embedded_hal::spi::blocking::{Transfer, Write, Transactional};
-use embedded_hal::delay::blocking::{DelayMs, DelayUs};
+use embedded_hal::delay::blocking::DelayUs;
 use embedded_hal::digital::blocking::{InputPin, OutputPin};
 
 use driver_pal::{wrapper::Wrapper as SpiWrapper, Error as WrapError};
@@ -124,7 +124,7 @@ where
     BusyPin: InputPin<Error = PinError>,
     ReadyPin: InputPin<Error = PinError>,
     ResetPin: OutputPin<Error = PinError>,
-    Delay: DelayMs<u32, Error = DelayError> + DelayUs<u32, Error = DelayError>,
+    Delay: DelayUs<Error = DelayError>,
     SpiError: Debug + Sync + Send + 'static,
     PinError: Debug + Sync + Send + 'static,
     DelayError: Debug + Sync + Send + 'static,
@@ -429,7 +429,7 @@ where
     }
 }
 
-impl<Base, CommsError, PinError, DelayError> DelayMs<u32> for Sx127x<Base, CommsError, PinError, DelayError>
+impl<Base, CommsError, PinError, DelayError> DelayUs for Sx127x<Base, CommsError, PinError, DelayError>
 where
     Base: base::Base<CommsError, PinError, DelayError>,
     CommsError: Debug + Sync + Send + 'static,
@@ -440,6 +440,9 @@ where
 
     fn delay_ms(&mut self, t: u32) -> Result<(), Error<CommsError, PinError, DelayError>> {
         self.hal.delay_ms(t).map_err(Error::Delay)
+    }
+    fn delay_us(&mut self, t: u32) -> Result<(), Error<CommsError, PinError, DelayError>> {
+        self.hal.delay_us(t).map_err(Error::Delay)
     }
 }
 
@@ -672,16 +675,13 @@ where
     ///
     /// This copies data into the provided slice, updates the provided information object,
     ///  and returns the number of bytes received on success
-    fn get_received(
-        &mut self,
-        info: &mut Self::Info,
-        data: &mut [u8],
-    ) -> Result<usize, Self::Error> {
-        match self.mode {
-            Mode::LoRa => self.lora_get_received(info, data),
-            Mode::FskOok => self.fsk_get_received(info, data),
+    fn get_received<'a>(&mut self, data: &'a mut [u8]) -> Result<(usize, Self::Info), Self::Error> {
+        let mut info = Self::Info::default();
+        (match self.mode {
+            Mode::LoRa => self.lora_get_received(&mut info, data),
+            Mode::FskOok => self.fsk_get_received(&mut info, data),
             _ => Err(Error::InvalidConfiguration),
-        }
+        }).map(|n| (n, info))
     }
 }
 

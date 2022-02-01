@@ -13,13 +13,11 @@ use structopt::StructOpt;
 use driver_pal::hal::{HalInst, HalDelay};
 
 use radio_sx127x::prelude::*;
+use radio::helpers::do_operation;
 
 
 mod options;
 use options::*;
-
-mod operations;
-use operations::*;
 
 fn main() {
     // Load options
@@ -88,10 +86,10 @@ fn main() {
             return;
         }
         Command::LoRa(lora_config) => {
-            do_command(radio, lora_config.operation).expect("error executing command");
+            do_operation(&mut radio, lora_config.operation).expect("error executing command");
         }
         Command::Gfsk(gfsk_config) => {
-            do_command(radio, gfsk_config.operation).expect("error executing command");
+            do_operation(&mut radio, gfsk_config.operation).expect("error executing command");
         }
     }
 }

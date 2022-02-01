@@ -52,7 +52,6 @@ fn integration() {
     let mut received = false;
     let mut buff = [0u8; 1024];
     let mut n = 0;
-    let mut info = PacketInfo::default();
 
     for _i in 0..10 {
         // Check TX state
@@ -63,7 +62,8 @@ fn integration() {
 
         // Check RX state
         if radio1.check_receive(false).unwrap() {
-            n = radio1.get_received(&mut info, &mut buff).unwrap();
+            let (nn, info) = radio1.get_received(&mut buff).unwrap();
+            n = nn;
             received = true;
             println!("RX complete ({:?} {:?})", info, &buff[..n]);
         }

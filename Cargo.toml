@@ -12,19 +12,17 @@ pkg-url = "{ repo }/releases/download/v{ version }/sx127x-util-{ target }.tgz"
 bin-dir = "{ bin }-{ target }{ format }"
 
 [features]
-util = [ "structopt", "driver-pal/hal", "simplelog", "humantime" ] 
+util = [ "structopt", "driver-pal/hal", "simplelog", "humantime", "radio/helpers" ] 
 default = [ "util", "serde", "driver-pal/hal-cp2130", "driver-pal/hal-linux" ]
 
 [dependencies]
-radio = "0.9.1"
-embedded-hal = "1.0.0-alpha.5"
+radio = { git = "https://github.com/burrbull/radio-hal", branch = "helpers-alpha6", default_features = false }
+embedded-hal = "1.0.0-alpha.6"
 libc = "0.2"
 log = { version = "0.4" }
 bitflags = "1.0"
 
-driver-pal = { version = "0.8.0-alpha.5", default_features = false }
-linux-embedded-hal = { version = "0.4.0-alpha.1", optional = true }
-driver-cp2130 = { version = "1.0.0-alpha.4", optional = true }
+driver-pal = { git = "https://github.com/kaidokert/rust-driver-pal", branch = "1.0-alpha6", default_features = false }
 
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 structopt = { version = "0.3.21", optional = true }
