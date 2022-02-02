@@ -16,7 +16,7 @@ util = [ "structopt", "driver-pal/hal", "simplelog", "humantime", "radio/helpers
 default = [ "util", "serde", "driver-pal/hal-cp2130", "driver-pal/hal-linux" ]
 
 [dependencies]
-radio = { git = "https://github.com/burrbull/radio-hal", branch = "helpers-alpha6", default_features = false }
+radio = { git = "https://github.com/rust-iot/radio-hal", default_features = false }
 embedded-hal = "1.0.0-alpha.6"
 libc = "0.2"
 log = { version = "0.4" }

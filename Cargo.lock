@@ -498,7 +498,7 @@ dependencies = [
 [[package]]
 name = "radio"
 version = "0.10.1"
-source = "git+https://github.com/burrbull/radio-hal?branch=helpers-alpha6#6e04a2abb01b7f02ef208ec9842e07cd806b77fd"
+source = "git+https://github.com/rust-iot/radio-hal#3e4e50588f4434d24556c44b6c16a96e90f76a0f"
 dependencies = [
  "byteorder",
  "chrono",
